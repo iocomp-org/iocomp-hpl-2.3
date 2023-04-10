@@ -1,0 +1,15 @@
+# make file in and am 
+**/Makefile.in 
+**/Makefile.am 
+**/Makefile.inc 
+**/Makefile
+
+# object files 
+**/*.o 
+
+# linux folder
+**/linux/
+
+# dat files
+**/*.dat 
+
