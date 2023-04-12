@@ -130,7 +130,6 @@ int main( ARGC, ARGV )
 			IOLIBNUM = atoi(ARGV[4]); 
 		}
 	}
-	printf("IOLIBNUM %i \n", IOLIBNUM); 
 
 	/*
 	 * iocomp initialisations
@@ -153,6 +152,10 @@ int main( ARGC, ARGV )
 
 	MPI_Comm_rank( comm, &rank );
 	MPI_Comm_size( comm, &size );
+	if(!rank)
+	{
+		printf("IO library selection %i HT flag value %i\n", IOLIBNUM, HT_flag); 
+	}
 
 	/*
 	 * Read and check validity of test parameters from input file

@@ -204,8 +204,11 @@ void HPL_pdtest
 	 compTime = MPI_Wtime() - timerStart; // compute time calculate 
 	 
 	 MPI_Request request; 
+	 int rank; 
+	 MPI_Comm_rank(GRID->all_comm, &rank); // need rank to only print once 
 
-	 size_t localSize = N* (N+1); // size of mat as parameters given to pdmatgen 
+	 size_t localSize = (size_t)(mat.nq)*(size_t)(mat.ld); // local size of matrix
+	 printf("localsize of process rank %i is %li \n",rank,localSize); 
 	 timerStart = MPI_Wtime(); 
 	 dataSend(mat.A, &TEST->iocompParams, &request, localSize); // iocomp -> send data 
 	 sendTime = MPI_Wtime() - timerStart; // send time calculate 
@@ -458,8 +461,6 @@ void HPL_pdtest
 	 MPI_Reduce(&compTime, &maxCompTime, 1, MPI_DOUBLE, MPI_MAX, 0, GRID->all_comm); 
 	 MPI_Reduce(&sendTime, &maxSendTime, 1, MPI_DOUBLE, MPI_MAX, 0, GRID->all_comm); 
 	 MPI_Reduce(&waitTime, &maxWaitTime, 1, MPI_DOUBLE, MPI_MAX, 0, GRID->all_comm); 
-	 int rank; 
-	 MPI_Comm_rank(GRID->all_comm, &rank); 
 	 if(!rank){
 		 printf("iocomp->timers-maxcompTime=%lf,maxsendTime=%lf,maxwaitTime=%lf \n",maxCompTime, maxSendTime, maxWaitTime);  
 	 } 
