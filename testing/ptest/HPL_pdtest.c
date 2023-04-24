@@ -209,7 +209,6 @@ void HPL_pdtest
 
 	 // make them perfect squares. Hacky way of ensuring that it works with iocomp
 	 size_t localSize = (size_t)(mat.nq)*(size_t)(mat.ld); // local size of matrix
-	 printf("localsize of process rank %i is %li, nq = %li ld = %li \n",rank,localSize, (size_t)mat.nq, (size_t)mat.ld); 
 
 	 timerStart = MPI_Wtime(); 
 	 dataSend(mat.A, &TEST->iocompParams, &request, localSize); // iocomp -> send data 
