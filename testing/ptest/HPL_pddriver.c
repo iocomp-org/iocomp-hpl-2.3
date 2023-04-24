@@ -49,6 +49,8 @@
  */
 #include "hpl.h"
 #define NODESIZE 128
+#define OUTPUT "output.csv"
+
 #ifdef STDC_HEADERS
 	int main
 (
@@ -152,10 +154,21 @@ int main( ARGC, ARGV )
 
 	MPI_Comm_rank( comm, &rank );
 	MPI_Comm_size( comm, &size );
+	FILE* out; 
+	// write to file
 	if(!rank)
 	{
+		int filetest = remove(OUTPUT);
+		out = fopen(OUTPUT, "w+");
+		if (out == NULL)
+		{
+			printf("Error: No output file\n");
+			exit(1);
+		}
 		printf("IO library selection %i HT flag value %i\n", IOLIBNUM, HT_flag); 
-	}
+		fprintf(out,"computeTime(s),sendTime(s),waitTime(s),wallTime(s)\n");  
+		fclose(out); 
+	} 
 
 	/*
 	 * Read and check validity of test parameters from input file
@@ -268,7 +281,7 @@ int main( ARGC, ARGV )
 										algo.fswap = fswap; algo.fsthr = tswap;
 										algo.equil = equil; algo.align = align;
 
-										HPL_pdtest( &test, &grid, &algo, nval[in], nbval[inb] );
+										HPL_pdtest( &test, &grid, &algo, nval[in], nbval[inb]);
 
 									}
 								}
@@ -336,14 +349,17 @@ label_end_of_npqs: ;
 	vsip_finalize((void*)0);
 #endif
 
-  stopSend(&test.iocompParams); // iocomp -> send ghost message to stop ioServer 
+	stopSend(&test.iocompParams); // iocomp -> send ghost message to stop ioServer 
 	/*
 	 * get max wall time using MPI reduce, then rank 0 prints them out 
 	 */ 
 	double maxWallTime; 
 	MPI_Reduce(&wallTime,&maxWallTime, 1, MPI_DOUBLE, MPI_MAX, 0, comm); 
 	if(!rank){
-		printf("iocomp->wall time(s) %lf\n", maxWallTime); 
+		out = fopen(OUTPUT, "a");
+		fprintf(out, ",,,%lf\n", maxWallTime);  // wall time 
+		fclose(out);  // close output file object 
+		out = NULL; 
 	} 
 	MPI_Finalize();
 	exit( 0 );
