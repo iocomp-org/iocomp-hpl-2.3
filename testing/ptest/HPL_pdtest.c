@@ -208,21 +208,8 @@ void HPL_pdtest
 	 MPI_Comm_rank(GRID->all_comm, &rank); // need rank to only print once 
 
 	 // make them perfect squares. Hacky way of ensuring that it works with iocomp
-	 size_t localSize = 1; 
-	 if(mat.nq != mat.ld)
-	 {
-		if(mat.nq > mat.ld)
-		{	
-		 localSize = (size_t)(mat.nq)*(size_t)(mat.nq); 
-		}
-		else
-		{
-		 localSize = (size_t)(mat.ld)*(size_t)(mat.ld); 
-		}
-	 }
-	 // size_t localSize = (size_t)(mat.nq)*(size_t)(mat.ld); // local size of matrix
+	 size_t localSize = (size_t)(mat.nq)*(size_t)(mat.ld); // local size of matrix
 	 printf("localsize of process rank %i is %li, nq = %li ld = %li \n",rank,localSize, (size_t)mat.nq, (size_t)mat.ld); 
-
 
 	 timerStart = MPI_Wtime(); 
 	 dataSend(mat.A, &TEST->iocompParams, &request, localSize); // iocomp -> send data 
